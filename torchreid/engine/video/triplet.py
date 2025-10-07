@@ -75,7 +75,8 @@ class VideoTripletEngine(ImageTripletEngine):
         scheduler=None,
         device="cuda",
         label_smooth=True,
-        pooling_method='avg'
+        pooling_method='avg',
+        mining_type='batch_all'
     ):
         super(VideoTripletEngine, self).__init__(
             datamanager,
@@ -86,7 +87,8 @@ class VideoTripletEngine(ImageTripletEngine):
             weight_x=weight_x,
             scheduler=scheduler,
             device=device,
-            label_smooth=label_smooth
+            label_smooth=label_smooth,
+            mining_type=mining_type
         )
         self.pooling_method = pooling_method
 

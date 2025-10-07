@@ -46,7 +46,8 @@ def build_engine(cfg, datamanager, model, optimizer, scheduler):
                 weight_x=cfg.loss.triplet.weight_x,
                 scheduler=scheduler,
                 device='cuda' if cfg.use_gpu else 'cpu',
-                label_smooth=cfg.loss.softmax.label_smooth
+                label_smooth=cfg.loss.softmax.label_smooth,
+                mining_type=cfg.loss.triplet.mining_type
             )
 
     else:
@@ -71,7 +72,9 @@ def build_engine(cfg, datamanager, model, optimizer, scheduler):
                 weight_x=cfg.loss.triplet.weight_x,
                 scheduler=scheduler,
                 device='cuda' if cfg.use_gpu else 'cpu',
-                label_smooth=cfg.loss.softmax.label_smooth
+                label_smooth=cfg.loss.softmax.label_smooth,
+                pooling_method=cfg.video.pooling_method,
+                mining_type=cfg.loss.triplet.mining_type
             )
 
     return engine

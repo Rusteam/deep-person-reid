@@ -6,7 +6,11 @@ import datetime
 from collections import OrderedDict
 import torch
 from torch.nn import functional as F
-from torch.utils.tensorboard import SummaryWriter
+
+try:
+    from torch.utils.tensorboard import SummaryWriter
+except ModuleNotFoundError:
+    print("Tensorboard not found")
 
 from torchreid import metrics
 from torchreid.utils import (

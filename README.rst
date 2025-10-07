@@ -33,6 +33,7 @@ You can find some research projects that are built on top of Torchreid `here <ht
 
 What's new
 ------------
+- [Oct 2025] Added multiple triplet mining strategies: ``batch_hard``, ``batch_all``, ``batch_semihard``, and ``batch_hard_soft``. Can be configured via ``loss.triplet.mining_type`` in config or passed directly to triplet engines.
 - [Aug 2022] We have added model export capabilities to the following frameworks: ONNX, OpenVINO and TFLite. The export script can be found `here <https://github.com/KaiyangZhou/deep-person-reid/blob/master/tools/export.py>`_
 - [Aug 2021] We have released the ImageNet-pretrained models of ``osnet_ain_x0_75``, ``osnet_ain_x0_5`` and ``osnet_ain_x0_25``. The pretraining setup follows `pycls <https://github.com/facebookresearch/pycls/blob/master/configs/archive/imagenet/resnet/R-50-1x64d_step_8gpu.yaml>`_.
 - [Apr 2021] We have updated the appendix in the `TPAMI version of OSNet <https://arxiv.org/abs/1910.06827v5>`_ to include results in the multi-source domain generalization setting. The trained models can be found in the `Model Zoo <https://kaiyangzhou.github.io/deep-person-reid/MODEL_ZOO.html>`_.
@@ -225,6 +226,50 @@ Here we only test the cross-domain performance. However, if you also want to tes
 Different from the same-domain setting, here we replace :code:`random_erase` with :code:`color_jitter`. This can improve the generalization performance on the unseen target dataset.
 
 Pretrained models are available in the `Model Zoo <https://kaiyangzhou.github.io/deep-person-reid/MODEL_ZOO.html>`_.
+
+
+Triplet loss with mining strategies
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To use triplet loss with different mining strategies, you can specify the :code:`mining_type` parameter. Four strategies are available:
+
+- :code:`batch_all` (default): Uses all valid triplets in the batch
+- :code:`batch_hard`: Selects hardest positive and hardest negative for each anchor
+- :code:`batch_semihard`: Selects semi-hard negatives (negatives harder than positive but within margin)
+- :code:`batch_hard_soft`: Weighted combination using softmax over hard examples
+
+Example with semi-hard mining:
+
+.. code-block:: bash
+
+    python scripts/main.py \
+    --config-file configs/im_osnet_x1_0_softmax_256x128_amsgrad.yaml \
+    --root $PATH_TO_DATA \
+    --transforms random_flip random_erase \
+    loss.name triplet \
+    loss.triplet.margin 0.3 \
+    loss.triplet.weight_t 1.0 \
+    loss.triplet.weight_x 0.0 \
+    loss.triplet.mining_type batch_semihard \
+    sampler.train_sampler RandomIdentitySampler \
+    sampler.num_instances 4
+
+You can also use it programmatically:
+
+.. code-block:: python
+
+    engine = torchreid.engine.ImageTripletEngine(
+        datamanager,
+        model,
+        optimizer=optimizer,
+        margin=0.3,
+        weight_t=1.0,
+        weight_x=0.0,
+        scheduler=scheduler,
+        mining_type='batch_semihard'  # or 'batch_hard', 'batch_all', 'batch_hard_soft'
+    )
+
+**Important**: When using triplet loss, you must use :code:`RandomIdentitySampler` to ensure each batch contains multiple instances of the same identity.
 
 
 Datasets

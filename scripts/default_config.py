@@ -92,6 +92,7 @@ def get_default_config():
     cfg.loss.triplet.margin = 0.3 # distance margin
     cfg.loss.triplet.weight_t = 1. # weight to balance hard triplet loss
     cfg.loss.triplet.weight_x = 0. # weight to balance cross entropy loss
+    cfg.loss.triplet.mining_type = 'batch_all' # mining strategy: batch_all, batch_hard, batch_semihard, batch_hard_soft
 
     # test
     cfg.test = CN()

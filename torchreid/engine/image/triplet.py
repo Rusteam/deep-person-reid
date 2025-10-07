@@ -70,6 +70,7 @@ class ImageTripletEngine(Engine):
         scheduler=None,
         device="cuda",
         label_smooth=True,
+        mining_type='batch_all',
     ):
         super(ImageTripletEngine, self).__init__(datamanager, device)
 
@@ -83,7 +84,7 @@ class ImageTripletEngine(Engine):
         self.weight_t = weight_t
         self.weight_x = weight_x
 
-        self.criterion_t = TripletLoss(margin=margin)
+        self.criterion_t = TripletLoss(margin=margin, mining_type=mining_type)
         self.criterion_x = CrossEntropyLoss(
             num_classes=self.datamanager.num_train_pids,
             device=device,
